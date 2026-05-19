@@ -30,9 +30,12 @@ export default function ReviewScreen({ route, navigation }) {
   const [incident, setIncident] = useState(initialIncident);
   const [submitting, setSubmitting] = useState(false);
 
-  const clipUrl = `${BACKEND_URL}/api/clips/${incident.clip_filename}`;
+  const clipUrl = incident.clip_filename
+    ? `${BACKEND_URL}/api/clips/${incident.clip_filename}`
+    : null;
 
-  const player = useVideoPlayer(clipUrl, (p) => {
+  const player = useVideoPlayer(clipUrl || '', (p) => {
+    if (!clipUrl) return;
     p.loop = true;
     p.play();
   });
@@ -89,12 +92,18 @@ export default function ReviewScreen({ route, navigation }) {
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       {/* Video Oynatıcı */}
       <View style={styles.videoContainer}>
-        <VideoView
-          player={player}
-          style={styles.video}
-          contentFit="contain"
-          nativeControls
-        />
+        {clipUrl ? (
+          <VideoView
+            player={player}
+            style={styles.video}
+            contentFit="contain"
+            nativeControls
+          />
+        ) : (
+          <View style={styles.noVideo}>
+            <Text style={styles.noVideoText}>Video mevcut değil</Text>
+          </View>
+        )}
         {isReviewed && (
           <View style={[
             styles.reviewedBanner,
@@ -182,6 +191,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   video: { width: '100%', height: '100%' },
+  noVideo: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  noVideoText: { color: '#555', fontSize: 14 },
   reviewedBanner: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
     paddingVertical: 8, alignItems: 'center',
