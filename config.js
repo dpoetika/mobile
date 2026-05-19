@@ -1,9 +1,12 @@
 import { Platform } from 'react-native';
 
-// Android emülatörde localhost 10.0.2.2'ye yönlendirilir.
-// iOS simülatör ve Expo web'de localhost doğrudan çalışır.
-// Fiziksel cihaz kullanıyorsanız aşağıdaki satırı IP adresinizle değiştirin:
-//   export const BACKEND_URL = "http://192.168.1.X:5000";
-export const BACKEND_URL = Platform.OS === 'android'
-  ? 'http://10.0.2.2:5000'
-  : 'http://localhost:5000';
+// Fiziksel cihaz (Expo Go QR) için:
+//   1. Bilgisayarda PowerShell açın ve çalıştırın: ipconfig
+//   2. "Wireless LAN adapter Wi-Fi" altındaki IPv4 adresini bulun (192.168.x.x gibi)
+//   3. Aşağıdaki WIFI_IP değişkenini o adresle değiştirin
+//   4. Hem telefon hem bilgisayar AYNI WiFi ağında olmalı
+
+const WIFI_IP = "172.23.236.250";
+
+// Android emülatör için 10.0.2.2, fiziksel cihaz için WiFi IP kullanılır
+export const BACKEND_URL = `http://${WIFI_IP}:5000`;

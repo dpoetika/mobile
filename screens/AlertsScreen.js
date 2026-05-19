@@ -58,9 +58,12 @@ export default function AlertsScreen({ navigation }) {
   const [error, setError] = useState(null);
 
   const fetchIncidents = useCallback(async (silent = false) => {
-    if (!silent) setLoading(incidents.length === 0);
+    if (!silent) setLoading(true);
     try {
-      const res = await fetch(`${BACKEND_URL}/api/incidents`, { signal: AbortSignal.timeout(5000) });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(`${BACKEND_URL}/api/incidents`, { signal: controller.signal });
+      clearTimeout(timer);
       const data = await res.json();
       setIncidents(data);
       setError(null);
@@ -70,14 +73,14 @@ export default function AlertsScreen({ navigation }) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [incidents.length]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       fetchIncidents();
       const interval = setInterval(() => fetchIncidents(true), 5000);
       return () => clearInterval(interval);
-    }, [])
+    }, [fetchIncidents])
   );
 
   const onRefresh = () => {

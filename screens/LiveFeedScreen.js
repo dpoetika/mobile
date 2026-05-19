@@ -32,7 +32,10 @@ export default function LiveFeedScreen() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/status`, { signal: AbortSignal.timeout(3000) });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`${BACKEND_URL}/api/status`, { signal: controller.signal });
+      clearTimeout(timer);
       const data = await res.json();
       setStatus(data);
       setActiveEnv(data.environment);
@@ -43,7 +46,10 @@ export default function LiveFeedScreen() {
 
   const fetchSource = useCallback(async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/source`, { signal: AbortSignal.timeout(3000) });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`${BACKEND_URL}/api/source`, { signal: controller.signal });
+      clearTimeout(timer);
       const data = await res.json();
       setSourceInfo(data);
 

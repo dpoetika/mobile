@@ -34,7 +34,10 @@ export default function App() {
 
   const pollPending = useCallback(async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/incidents/pending`, { signal: AbortSignal.timeout(3000) });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`${BACKEND_URL}/api/incidents/pending`, { signal: controller.signal });
+      clearTimeout(timer);
       const data = await res.json();
       setPendingCount(data.count || 0);
     } catch {
